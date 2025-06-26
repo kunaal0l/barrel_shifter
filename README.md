@@ -22,40 +22,29 @@ For the 4-bit barrel shifter, dataflow modeling works well because:
 - **Clear Hardware Mapping**: Direct instantiation of MUX components maps well to FPGA/ASIC resources
 
 ```verilog
-// Actual 4×1 barrel shifter implementation
+// 4×1 barrel shifter dataflow implementation
 module barrel_shifter_df(out,i,n,lr);
-    input [3:0]i;    // 4-bit input data
-    input [1:0]n;    // 2-bit shift amount (0-3)
-    input lr;        // Left/Right shift control
-    output [3:0]out;
+    input [3:0]i; input [1:0]n; input lr; output [3:0]out;
+    wire [3:0]out_l,out_r; wire [3:0]a,b,c,d,a1,b1,c1,d1;
     
-    wire [3:0]out_l,out_r;
-    wire [3:0]a,b,c,d,a1,b1,c1,d1;
-    
-    // Right shift data preparation
+    // Right shift preparation
     assign a={i[3],i[2],i[1],i[0]};      // No shift
-    assign b={1'b0,i[3],i[2],i[1]};      // 1-bit right shift
-    assign c={1'b0,1'b0,i[3],i[2]};      // 2-bit right shift  
-    assign d={1'b0,1'b0,1'b0,i[3]};      // 3-bit right shift
+    assign b={1'b0,i[3],i[2],i[1]};      // 1-bit right
+    assign c={1'b0,1'b0,i[3],i[2]};      // 2-bit right
+    assign d={1'b0,1'b0,1'b0,i[3]};      // 3-bit right
     
-    // Left shift data preparation  
-    assign a1={i[0],i[1],i[2],i[3]};     // No shift (reversed)
-    assign b1={1'b0,i[0],i[1],i[2]};     // 1-bit left shift
-    assign c1={1'b0,1'b0,i[0],i[1]};     // 2-bit left shift
-    assign d1={1'b0,1'b0,1'b0,i[0]};     // 3-bit left shift
+    // Left shift preparation  
+    assign a1={i[0],i[1],i[2],i[3]};     // No shift
+    assign b1={1'b0,i[0],i[1],i[2]};     // 1-bit left
+    assign c1={1'b0,1'b0,i[0],i[1]};     // 2-bit left
+    assign d1={1'b0,1'b0,1'b0,i[0]};     // 3-bit left
     
-    // 8 MUX instances for both directions
+    // 8 MUX instances
     mux4x1_df m0(.y(out_r[3]),.i(d),.s(n));
     mux4x1_df m1(.y(out_r[2]),.i(c),.s(n));
-    mux4x1_df m2(.y(out_r[1]),.i(b),.s(n));
-    mux4x1_df m3(.y(out_r[0]),.i(a),.s(n));
+    // ... more MUX instances ...
     
-    mux4x1_df m4(.y(out_l[0]),.i(d1),.s(n));
-    mux4x1_df m5(.y(out_l[1]),.i(c1),.s(n));
-    mux4x1_df m6(.y(out_l[2]),.i(b1),.s(n));
-    mux4x1_df m7(.y(out_l[3]),.i(a1),.s(n));
-    
-    assign out = lr ? out_l : out_r;     // Direction selection
+    assign out = lr ? out_l : out_r;
 endmodule
 ```
 
@@ -75,68 +64,13 @@ Looking at the 4×1 implementation, scaling to 8×1 would require:
 - **16 MUX Instances**: 8 MUXes for left shift + 8 MUXes for right shift (vs 8 for 4-bit)
 - **64 Wire Assignments**: Manual preparation of 8 shift positions × 8 bits (vs 16 for 4-bit)
 - **8×1 MUX Components**: Each MUX now needs 8 inputs instead of 4
-- **Exponential Growth**: The structured dataflow approach becomes unwieldy:
-
-```verilog
-// For 8×1, you'd need something like this for EACH bit position:
-assign a_8bit = {i[7],i[6],i[5],i[4],i[3],i[2],i[1],i[0]};     // 0 shift
-assign b_8bit = {1'b0,i[7],i[6],i[5],i[4],i[3],i[2],i[1]};     // 1 shift  
-assign c_8bit = {2'b00,i[7],i[6],i[5],i[4],i[3],i[2]};         // 2 shift
-// ... continue for all 8 shift positions
-// Then repeat for left shifts (a1_8bit, b1_8bit, etc.)
-// Then instantiate 16 total 8×1 MUXes
-```
+- **Exponential Growth**: The structured dataflow approach becomes unwieldy for larger designs
 
 #### 2. **Why Behavioral Design is Better for Larger Circuits**
 
 ##### **Readability and Maintainability**
 ```verilog
-// Actual 8×1 behavioral implementation - incredibly clean!
-module barrel_shift(out,in,n,lr);
-    input [7:0]in;    // 8-bit input data
-    input [2:0]n;     // 3-bit shift amount (0-7)
-    input lr;         // Left/Right shift control
-    output reg [7:0]out;
-    
-    always @(*) begin
-        if(lr)
-            out = in << n;    // Left shift by n positions
-        else 
-            out = in >> n;    // Right shift by n positions
-    end
-endmodule
-```
-
-**The Behavioral Advantage is Crystal Clear:**
-- **Just 2 Lines of Logic**: The entire shifting operation in 2 simple lines!
-- **Built-in Operators**: Verilog's `<<` and `>>` operators handle all the complexity
-- **No Manual Wiring**: No need to manually prepare 64 different shift combinations
-- **No MUX Instantiation**: No need for 16 separate 8×1 multiplexers
-
-## The Dramatic Difference: Code Comparison
-
-### 4×1 Dataflow (30 lines, 8 MUXes, 16 wire assignments):
-```verilog
-module barrel_shifter_df(out,i,n,lr);
-    input [3:0]i; input [1:0]n; input lr; output [3:0]out;
-    wire [3:0]out_l,out_r; wire [3:0]a,b,c,d,a1,b1,c1,d1;
-    
-    assign a={i[3],i[2],i[1],i[0]};      assign a1={i[0],i[1],i[2],i[3]};
-    assign b={1'b0,i[3],i[2],i[1]};      assign b1={1'b0,i[0],i[1],i[2]};
-    assign c={1'b0,1'b0,i[3],i[2]};      assign c1={1'b0,1'b0,i[0],i[1]};
-    assign d={1'b0,1'b0,1'b0,i[3]};      assign d1={1'b0,1'b0,1'b0,i[0]};
-    
-    mux4x1_df m0(.y(out_r[3]),.i(d),.s(n)); mux4x1_df m4(.y(out_l[0]),.i(d1),.s(n));
-    mux4x1_df m1(.y(out_r[2]),.i(c),.s(n)); mux4x1_df m5(.y(out_l[1]),.i(c1),.s(n));
-    mux4x1_df m2(.y(out_r[1]),.i(b),.s(n)); mux4x1_df m6(.y(out_l[2]),.i(b1),.s(n));
-    mux4x1_df m3(.y(out_r[0]),.i(a),.s(n)); mux4x1_df m7(.y(out_l[3]),.i(a1),.s(n));
-    
-    assign out = lr ? out_l : out_r;
-endmodule
-```
-
-### 8×1 Behavioral (12 lines, 2 simple operations):
-```verilog
+// 8×1 behavioral implementation - clean and simple
 module barrel_shift(out,in,n,lr);
     input [7:0]in; input[2:0]n; input lr; output reg [7:0]out;
     
@@ -149,7 +83,45 @@ module barrel_shift(out,in,n,lr);
 endmodule
 ```
 
-**The contrast is clear**: The 8×1 behavioral design with **double the bit width** is **60% shorter** and infinitely more readable than the 4×1 dataflow design!
+**The Behavioral Advantage is Crystal Clear:**
+- **Just 2 Lines of Logic**: The entire shifting operation in 2 simple lines!
+- **Built-in Operators**: Verilog's `<<` and `>>` operators handle all the complexity
+- **No Manual Wiring**: No need to manually prepare 64 different shift combinations
+- **No MUX Instantiation**: No need for 16 separate 8×1 multiplexers
+
+## Code Comparison
+
+### 4×1 Dataflow (30 lines):
+```verilog
+module barrel_shifter_df(out,i,n,lr);
+    input [3:0]i; input [1:0]n; input lr; output [3:0]out;
+    wire [3:0]out_l,out_r; wire [3:0]a,b,c,d,a1,b1,c1,d1;
+    
+    assign a={i[3],i[2],i[1],i[0]};      
+    assign b={1'b0,i[3],i[2],i[1]};      
+    // ... 16 wire assignments total ...
+    
+    mux4x1_df m0(.y(out_r[3]),.i(d),.s(n)); 
+    mux4x1_df m1(.y(out_r[2]),.i(c),.s(n)); 
+    // ... 8 MUX instances total ...
+    
+    assign out = lr ? out_l : out_r;
+endmodule
+```
+
+### 8×1 Behavioral (12 lines):
+```verilog
+module barrel_shift(out,in,n,lr);
+    input [7:0]in; input[2:0]n; input lr; output reg [7:0]out;
+    
+    always @(*) begin
+        if(lr)
+            out = in << n;
+        else 
+            out = in >> n;
+    end
+endmodule
+```
 
 ##### **Flexibility and Modifications**
 - **Easy Feature Addition**: Adding new shift modes (arithmetic, logical, circular) is straightforward
