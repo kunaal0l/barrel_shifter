@@ -189,7 +189,7 @@ Modern synthesis tools excel at:
 
 | Aspect | 4×1 Dataflow | 8×1 Behavioral | 8×1 Dataflow (Hypothetical) |
 |--------|-------------|----------------|------------------------------|
-| **Development Time** | 2-3 hours | 15 minutes | 8+ hours |
+| **Development Time** | 1 hours | 15 minutes | 2+ hours |
 | **Code Lines** | 30 lines | 12 lines | 80+ lines |
 | **Logic Complexity** | 8 × 4×1 MUXes | 2 shift operations | 16 × 8×1 MUXes |
 | **Wire Assignments** | 16 explicit | 0 needed | 64+ explicit |
