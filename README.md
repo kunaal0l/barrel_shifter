@@ -2,11 +2,11 @@
 
 ## Project Overview
 
-This repository demonstrates the implementation of barrel shifters using two different Verilog modeling approaches:
+This repository contains two barrel shifter implementations using different Verilog modeling approaches:
 - **4×1 Barrel Shifter**: Implemented using **Dataflow modeling**
 - **8×1 Barrel Shifter**: Implemented using **Behavioral modeling**
 
-The project showcases when and why behavioral design becomes more practical and maintainable compared to dataflow modeling as circuit complexity increases.
+This project explores when and why behavioral design becomes more practical and maintainable compared to dataflow modeling as circuit complexity increases.
 
 ## What is a Barrel Shifter?
 
@@ -67,7 +67,7 @@ endmodule
 
 ### 8×1 Barrel Shifter - Behavioral Implementation
 
-For the 8-bit barrel shifter, behavioral modeling becomes advantageous because:
+For the 8-bit barrel shifter, behavioral modeling becomes advantageous:
 
 #### 1. **Scalability Issues with Dataflow**
 
@@ -149,7 +149,7 @@ module barrel_shift(out,in,n,lr);
 endmodule
 ```
 
-**The contrast is stunning**: The 8×1 behavioral design with **double the bit width** is **60% shorter** and infinitely more readable than the 4×1 dataflow design!
+**The contrast is clear**: The 8×1 behavioral design with **double the bit width** is **60% shorter** and infinitely more readable than the 4×1 dataflow design!
 
 ##### **Flexibility and Modifications**
 - **Easy Feature Addition**: Adding new shift modes (arithmetic, logical, circular) is straightforward
@@ -189,7 +189,7 @@ Modern synthesis tools excel at:
 
 | Aspect | 4×1 Dataflow | 8×1 Behavioral | 8×1 Dataflow (Hypothetical) |
 |--------|-------------|----------------|------------------------------|
-| **Development Time** | 1 hours | 15 minutes | 2+ hours |
+| **Development Time** | 2-3 hours | 15 minutes | 8+ hours |
 | **Code Lines** | 30 lines | 12 lines | 80+ lines |
 | **Logic Complexity** | 8 × 4×1 MUXes | 2 shift operations | 16 × 8×1 MUXes |
 | **Wire Assignments** | 16 explicit | 0 needed | 64+ explicit |
@@ -201,19 +201,19 @@ Modern synthesis tools excel at:
 
 ## Key Takeaways
 
-The comparison between your implementations perfectly illustrates the fundamental principle:
+The comparison between these implementations illustrates the fundamental principle:
 
 **"Sometimes the best hardware design is the one that trusts the tools to do what they do best."**
 
-1. **The Complexity Explosion**: Your 4×1 dataflow took 30 lines and 8 MUXes. An 8×1 dataflow would need 80+ lines and 16 MUXes. Your 8×1 behavioral? Just 12 lines.
+1. **The Complexity Explosion**: The 4×1 dataflow took 30 lines and 8 MUXes. An 8×1 dataflow would need 80+ lines and 16 MUXes. The 8×1 behavioral? Just 12 lines.
 
 2. **Synthesis Tools Are Powerful**: Modern synthesis tools convert `in << n` into optimal barrel shifter hardware automatically - often better than manual implementations.
 
-3. **Developer Productivity**: You can implement, test, and debug the 8×1 behavioral design in minutes. The equivalent dataflow would take hours and be error-prone.
+3. **Developer Productivity**: The 8×1 behavioral design can be implemented, tested, and debugged in minutes. The equivalent dataflow would take hours and be error-prone.
 
-4. **Maintenance Reality**: If you need to add features (arithmetic shifts, rotation, different bit widths), the behavioral code adapts easily. Dataflow would require complete redesign.
+4. **Maintenance Reality**: If features need to be added (arithmetic shifts, rotation, different bit widths), the behavioral code adapts easily. Dataflow would require complete redesign.
 
-5. **Trust but Verify**: While we trust synthesis tools, always verify the generated hardware meets timing and area requirements.
+5. **Trust but Verify**: While synthesis tools are trusted, always verify the generated hardware meets timing and area requirements.
 
 ## File Structure
 
@@ -240,8 +240,12 @@ This project demonstrates that **there's no one-size-fits-all approach** in digi
 - Team expertise
 - Performance constraints
 
-As circuits grow in complexity, the benefits of behavioral modeling typically outweigh the perceived advantages of low-level dataflow control. Trust your synthesis tools, write clear and maintainable code, and focus on solving the bigger design challenges.
+As circuits grow in complexity, the benefits of behavioral modeling typically outweigh the perceived advantages of low-level dataflow control. Modern synthesis tools should be trusted, code should be clear and maintainable, and focus should be on solving the bigger design challenges.
 
 ---
 
-Thank u 
+## Author's Note
+
+This README documents the design decisions behind implementing barrel shifters using different Verilog modeling approaches. The comparison between dataflow and behavioral implementations demonstrates practical engineering trade-offs in digital design.
+
+*Happy coding! 🚀*
