@@ -220,4 +220,5 @@ As circuits grow in complexity, the benefits of behavioral modeling typically ou
 
 This README documents the design decisions behind implementing barrel shifters using different Verilog modeling approaches. The comparison between dataflow and behavioral implementations demonstrates practical engineering trade-offs in digital design.
 
+If you encounter any suggestions or have questions, please open an issue in the GitHub repository.
 *Happy coding! 🚀*
