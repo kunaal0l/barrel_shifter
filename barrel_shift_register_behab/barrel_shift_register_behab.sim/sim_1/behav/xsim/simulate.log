@@ -1,0 +1,11 @@
+Vivado Simulator 2018.3
+Time resolution is 1 ps
+Time=0 | in=10110011 | n=0 | lr=1 | out=10110011
+Time=10000 | in=10110011 | n=1 | lr=1 | out=01100110
+Time=20000 | in=10110011 | n=2 | lr=1 | out=11001100
+Time=30000 | in=10110011 | n=3 | lr=1 | out=10011000
+Time=40000 | in=10110011 | n=0 | lr=0 | out=10110011
+Time=50000 | in=10110011 | n=1 | lr=0 | out=01011001
+Time=60000 | in=10110011 | n=2 | lr=0 | out=00101100
+Time=70000 | in=10110011 | n=3 | lr=0 | out=00010110
+$finish called at time : 80 ns : File "C:/Users/kunal/barrel_shift_register_behab/barrel_shift_register_behab.srcs/sources_1/new/barrel_shift_tb.v" Line 40

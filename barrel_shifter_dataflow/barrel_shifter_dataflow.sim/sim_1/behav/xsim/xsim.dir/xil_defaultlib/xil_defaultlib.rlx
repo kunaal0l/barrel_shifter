@@ -1,0 +1,8 @@
+0.6
+2018.3
+Dec  7 2018
+00:33:28
+C:/Users/kunal/barrel_shifter_dataflow/barrel_shifter_dataflow.sim/sim_1/behav/xsim/glbl.v,1544155481,verilog,,,,glbl,,,,,,,,
+C:/Users/kunal/barrel_shifter_dataflow/barrel_shifter_dataflow.srcs/sources_1/new/barrel_shift_tb.v,1750962764,verilog,,,,barrel_shifter_df_tb,,,,,,,,
+C:/Users/kunal/barrel_shifter_dataflow/barrel_shifter_dataflow.srcs/sources_1/new/barrel_shifter_df.v,1750964087,verilog,,C:/Users/kunal/barrel_shifter_dataflow/barrel_shifter_dataflow.srcs/sources_1/new/mux4x1_df.v,,barrel_shifter_df,,,,,,,,
+C:/Users/kunal/barrel_shifter_dataflow/barrel_shifter_dataflow.srcs/sources_1/new/mux4x1_df.v,1750961121,verilog,,C:/Users/kunal/barrel_shifter_dataflow/barrel_shifter_dataflow.srcs/sources_1/new/barrel_shift_tb.v,,mux4x1_df,,,,,,,,
